@@ -240,7 +240,7 @@ import { getAuth , createUserWithEmailAndPassword ,
    signInWithEmailAndPassword , onAuthStateChanged  } 
    from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 
-   import { getFirestore , doc, setDoc} from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+   import { getFirestore , doc, setDoc , addDoc, getDoc , collection} from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyB31ox1ABc41g_BamAamxqpn2QGqZCJ27A",
   authDomain: "foodside-9bead.firebaseapp.com",
@@ -272,7 +272,9 @@ const auth = getAuth(app);
 //     const errorMessage = error.message;
 //   });
 
-const signBtn = document.getElementById('signIn_Btn')
+
+
+const signBtn = document.getElementById('btn_up')
 
 signBtn.addEventListener('click' , createUserWithEP)
 
@@ -280,15 +282,46 @@ signBtn.addEventListener('click' , createUserWithEP)
 
 
 function createUserWithEP(){
-  const fullName = document.getElementById('na')
-const email = document.getElementById('em')
-const password = document.getElementById('pass')
+  const fullName = document.getElementById('name')
+  const fatherName = document.getElementById('fname')
+const email = document.getElementById('email')
+const password = document.getElementById('password')
 
 createUserWithEmailAndPassword(auth, email.value, password.value)
   .then( async (userCredential) => {
     // Signed in   
     const user = userCredential.user;
     console.log(user.uid)
+
+    // const querySnapshot = await getDocs(collection(db, "Todos"));
+    // querySnapshot.forEach((doc) => {
+    //   console.log(`${doc.id} => ${doc.data()}`);
+    // })
+    addDateInFireStore()
+
+    const reference = doc(db, "Todos",uid)
+
+    const docSnap = await getDoc(reference);
+  
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+  
+  
+      const itemDiv = document.getElementById('ulParent')
+         const list = `<li>
+    
+         <input type="text" value ="${docSnap.data().value}"/>
+         ${dete.toLocaleString()}
+         <button>Delete</button>
+         <button>Edit</button>
+    
+         </li>`
+    
+         itemDiv.innerHTML += list
+    } else {
+      // docSnap.data() will be undefined in this case
+      console.log("No such document!");
+    }
     // ...
   })
   .catch((error) => {
@@ -299,32 +332,44 @@ createUserWithEmailAndPassword(auth, email.value, password.value)
   });
 }
 
-const addDateInFireStore = async ()=>{
+// const addDateInFireStore = async ()=>{
 
-  const input=document.getElementById("todoInput")
+//   const input=document.getElementById("todoInput")
 
-    // Signed in   
+//     // Signed in   
       
    
-       const reference = doc(db, "Todos", auth.currentUser.uid)
+//        const reference = doc(db, "Todos", auth.currentUser.uid)
    
-       console.log(reference)
+//        console.log(reference)
    
-       await setDoc(reference, {
-         value : input.value,
+//        await setDoc(reference, {
+//          value : input.value,
    
   
-  })
- 
-
-    // ...
-  }
+//   })
+//     // ...
+//   }
+  // const getDataByFirestore = async ()=>{
+  //   const input=document.getElementById("todoInput")
+  
+  // const docRef = doc(db, "Todos", auth.currentUser.uid);
+  // const docSnap = await getDoc(docRef);
+  
+  // if (docSnap.exists()) {
+  //   console.log("Document data:", docSnap.data());
+  // } else {
+  //   // docSnap.data() will be undefined in this case
+  //   console.log("No such document!");
+  // }
+  // }
+  // getDataByFirestore()
  
   
 
 
 const todoDiv = document.getElementById('todo_div')
-const signIndiv = document.getElementById('main')
+const signIndiv = document.getElementById('main_div')
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -338,7 +383,34 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+const addDateInFireStore = async ()=>{
 
+ try{
+  const input=document.getElementById("todoInput")
+
+  // Signed in   
+    
+ 
+     const reference = doc(db, "Todos", auth.currentUser.uid)
+ 
+     console.log(reference)
+ 
+     await setDoc(reference, {
+       value : input.value,
+     
+
+
+   
+  
+  });
+}
+  catch(err){
+    console.log(err)
+  }
+
+    // ...
+  }
+  
 
 const addTodoBtn = document.getElementById('AddTodo_btn')
 const delTodoBtn = document.getElementById('DelTodo_btn')
@@ -361,12 +433,12 @@ function addTodo(){
 
      itemDiv.innerHTML += list
 
-     addDateInFireStore()
+    
+
+    //  getDataByFirestore()
 
      document.getElementById("todoInput").value = ''
    
 }
-
-
 
 
